@@ -12,19 +12,32 @@ class pesquisaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         
-        
-        
-        //
-        $pesquisas = Pesquisas::orderBy('nome')->get();
-        //$pesquisas = Pesquisas::where{"nome","like","a%"}->get();
+        //search
 
+        //$search_text = $_GET['search'];
+        $search_text = $request->search;
+        if(strlen($search_text)> 0){
+        $pesquisas = Pesquisas::where('nome','LIKE','%'.$search_text.'%')->orwhere('email','LIKE','%'.$search_text.'%')->orwhere('telefone','LIKE','%'.$search_text.'%')->get();
+        }else {
+
+
+        $search_text = $request->q;
+            if(strlen($search_text)>0){
+
+                $pesquisas = Pesquisas::where('nome','LIKE',$search_text.'%')->get();
+            }else{
+
+            
         
-    $pesquisas = Pesquisas::with('Pesquisas', function($query) use ($pesquisas) {
-        $query->where('pesquisas', 'LIKE', '%' . $pesquisas . '%');
-   })->get();
+        
+        $pesquisas = Pesquisas::orderBy('nome')->get();
+ 
+            }
+        }
+
 
    //return view('browse.index', compact('users'));
         
